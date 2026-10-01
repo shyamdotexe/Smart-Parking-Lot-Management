@@ -26,6 +26,14 @@ public class ParkingLot {
         return INSTANCE;
     }
 
+    /**
+     * Clears configured floors and parking state for package-level test setup.
+     */
+    void reset() {
+        floors.clear();
+        parkedVehicleNumbers.clear();
+    }
+
     public void addFloor(Floor floor) {
         if (floor == null) {
             throw new IllegalArgumentException("Floor cannot be null.");
