@@ -1,0 +1,7 @@
+com\parkinglot\exception\InvalidTicketException.class
+com\parkinglot\spot\SpotType.class
+com\parkinglot\billing\Payable.class
+com\parkinglot\vehicle\VehicleType.class
+com\parkinglot\exception\ParkingLotFullException.class
+com\parkinglot\vehicle\Vehicle.class
+com\parkinglot\spot\ParkingSpot.class
