@@ -1,0 +1,39 @@
+CLI SCENARIO SUMMARY - Smart Parking Lot Management System
+==========================================================
+Source of truth : src/main/java/com/parkinglot/main/ParkingLotCli.java (+ ParkingLot, Floor, spot/vehicle classes)
+Executed with   : java -cp target/classes com.parkinglot.main.ParkingLotCli < cli-input.txt
+Full transcript : output/cli-tests/full-cli-output.txt
+Focused runs    : output/cli-tests/segments/seg2..seg6-output.txt (used for screenshots)
+
+All results below are copied from the real CLI execution. A scenario is marked
+PASS only where the actual transcript shows the expected behavior.
+
+Scenario | Result | Evidence (observed output)
+---------+--------+--------------------------
+A. Empty parking status | PASS | "Total spots: 7" / "Available spots: 7"; all 7 spots FREE
+B. Successful BIKE parking | PASS | "Parked at floor 1, spot 1."
+C. Successful CAR parking | PASS | "Parked at floor 1, spot 2."
+D. Successful TRUCK parking | PASS | "Parked at floor 1, spot 3."
+E. Duplicate vehicle attempt | PASS | "Vehicle is already parked: TN05DB2480"
+F. Invalid vehicle type | PASS | "Invalid vehicle type." (input: MOTORCYCLE)
+G. Invalid menu option | PASS | "Please enter a number from 1 to 4." (input: 9)
+H. Invalid vehicle release (wrong vehicle on occupied spot) | PASS | "Vehicle release failed: vehicle does not match the vehicle parked at the specified spot."
+I. Invalid release does NOT change state | PASS | Status after H still shows floor 1 spot 1 = OCCUPIED
+J. Correct vehicle release | PASS | "Vehicle released successfully."
+K. Released spot becomes available | PASS | Status shows floor 1 spot 1 = FREE
+L. Park another vehicle after release | PASS | "Parked at floor 1, spot 1." (released spot reallocated)
+M. Wrong vehicle attempting to release an occupied spot | PASS | "Vehicle release failed: vehicle does not match the vehicle parked at the specified spot."
+N. Wrong spot attempting to release a parked vehicle | PASS | "Vehicle release failed: vehicle does not match the vehicle parked at the specified spot."
+O. Attempt to release an already-free spot | PASS | "Vehicle release failed: vehicle does not match the vehicle parked at the specified spot."
+P. Invalid floor number | PASS | "No matching parking spot was found." (input floor: 9)
+Q. Invalid spot ID | PASS | "No matching parking spot was found." (input spot: 99)
+R. Parking lot full (capacity reached) | PASS | "No suitable parking spot is available." after all 7 spots occupied
+S. Final parking status | PASS | All 7 spots OCCUPIED / "Available spots: 0"
+T. Normal application exit | PASS | "Thank you for using Smart Parking Lot Management."
+
+Additional validation exercised (not in the A-T list):
+- Non-numeric floor/spot input | PASS | "Floor number and spot ID must be whole numbers." (input floor: abc)
+
+Unsupported / not applicable:
+- None of the requested scenarios are unsupported by this implementation.
+  Every A-T scenario maps to actual CLI behavior in the source and was executed.

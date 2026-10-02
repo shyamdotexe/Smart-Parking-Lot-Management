@@ -1,0 +1,120 @@
+SMART PARKING LOT MANAGEMENT SYSTEM
+FINAL TEST EVIDENCE
+============================================================
+Final verification run : mvn clean test @ 2026-10-02T23:43:54+05:30
+CLI execution          : java -cp target/classes com.parkinglot.main.ParkingLotCli
+Environment            : Java 26.0.1 / Maven 3.9.16 / Windows 11
+
+1. AUTOMATED TEST RESULT
+   [INFO] BUILD SUCCESS
+
+2. TOTAL TESTS
+   94
+
+3. PASSED
+   94
+
+4. FAILED
+   0
+
+5. ERRORS
+   0
+
+6. SKIPPED
+   0
+
+7. CLI SCENARIOS TESTED
+   21 executed (requested A-T, plus one extra non-numeric input check).
+   Authoritative transcript : cli-tests/full-cli-output.txt
+   Focused runs (screenshots): cli-tests/segments/seg2..seg6-output.txt
+
+8. SUCCESSFUL SCENARIOS
+   B  BIKE parking  -> "Parked at floor 1, spot 1."
+   C  CAR parking   -> "Parked at floor 1, spot 2."
+   D  TRUCK parking -> "Parked at floor 1, spot 3."
+   J  Correct release -> "Vehicle released successfully."
+   L  Park after release -> "Parked at floor 1, spot 1." (reused spot)
+   S  Final status -> all 7 spots OCCUPIED / "Available spots: 0"
+   T  Exit -> "Thank you for using Smart Parking Lot Management."
+   Extra: A (empty status), K (spot free after release)
+
+9. VALIDATION SCENARIOS
+   E  Duplicate vehicle       -> "Vehicle is already parked: TN05DB2480"
+   F  Invalid vehicle type    -> "Invalid vehicle type."
+   G  Invalid menu option     -> "Please enter a number from 1 to 4."
+   H  Invalid vehicle release -> "Vehicle release failed: vehicle does not match the vehicle parked at the specified spot."
+   I  State unchanged after failed release -> spot still OCCUPIED (verified via status)
+   M  Wrong vehicle on occupied spot -> release failed
+   N  Wrong spot for parked vehicle -> release failed
+   O  Release already-free spot -> release failed
+   P  Invalid floor number    -> "No matching parking spot was found."
+   Q  Invalid spot ID         -> "No matching parking spot was found."
+   Extra: Non-numeric floor/spot -> "Floor number and spot ID must be whole numbers."
+
+10. RELEASE VALIDATION RESULT
+    PASS. Verified in cli-tests/segments/seg4-output.txt and screenshots/04-release-validation.png:
+    TN05DB2480 parked at floor 1 spot 1; attempt to release INVALID9999 from that spot was
+    rejected; a following status showed the spot STILL OCCUPIED. The release-validation bug
+    is fixed and confirmed by ReleaseValidationTest (4 tests, all passing).
+
+11. REALLOCATION RESULT
+    PASS. Verified in cli-tests/segments/seg5-output.txt and screenshots/05-release-and-reallocation.png:
+    TN02CD5678 released from floor 1 spot 1; status showed it FREE (Available: 7); a new
+    vehicle (TN07EF3456) was then parked at the same spot (floor 1, spot 1).
+
+12. CAPACITY RESULT
+    PASS (applicable). The configured CLI lot has 7 spots. All 7 were occupied successfully;
+    the 8th park returned "No suitable parking spot is available." and the final status
+    showed "Available spots: 0". See screenshots/06-final-status-and-exit.png.
+
+13. NUMBER OF SCREENSHOTS
+    6 (exactly as requested), stored in output/screenshots/.
+    Each CLI screenshot shows BOTH the exact typed input AND the corresponding
+    program output: typed inputs are rendered in GREEN and program output in
+    GRAY, with a color-coded legend in the header. The input lines are the
+    verbatim contents of cli-input.txt / seg*-input.txt that were actually fed
+    to the program; the output lines are the verbatim captured program output.
+    No input or output line was invented or edited.
+
+14. FILES CREATED
+    output/automated-tests/full-test-output.txt   (complete real Maven output, final run)
+    output/automated-tests/test-summary.txt
+    output/cli-tests/full-cli-output.txt          (complete real CLI transcript)
+    output/cli-tests/cli-input.txt                (CLI input, scenarios A-T)
+    output/cli-tests/scenario-summary.txt
+    output/cli-tests/segments/seg2..seg6-input.txt
+    output/cli-tests/segments/seg2..seg6-output.txt
+    output/screenshots/01-test-suite-success.png
+    output/screenshots/02-parking-and-allocation.png
+    output/screenshots/03-validation-and-errors.png
+    output/screenshots/04-release-validation.png
+    output/screenshots/05-release-and-reallocation.png
+    output/screenshots/06-final-status-and-exit.png
+    output/summary.txt                            (this file)
+
+15. UNSUPPORTED SCENARIOS
+    None. Every requested scenario (A-T) maps to real behavior in
+    src/main/java/com/parkinglot/main/ParkingLotCli.java and was executed.
+
+16. ACTUAL FAILURES
+    None. 0 test failures, 0 errors, 0 CLI scenario failures.
+
+------------------------------------------------------------
+SCREENSHOT METHOD (transparency note)
+------------------------------------------------------------
+No OS-level terminal-capture tool is available in this environment, so the six
+screenshots were produced by rendering the REAL captured data into PNG images
+with a terminal-styled renderer (Python + Pillow, Consolas monospace):
+  * the program output lines come from full-test-output.txt and seg*-output.txt
+  * the typed input lines come from cli-input.txt and the seg*-input.txt files
+    that were actually piped into the CLI
+Inputs are inserted at the exact prompt the program printed (Choose an option /,
+Vehicle number /, Vehicle type /, Floor number /, Spot ID /), which is the order
+the program reads from stdin. This reproduces the interactive session showing
+which input produced which result. No content was written by hand or invented.
+The intermediate renderer files were removed; only the six final PNGs remain.
+
+------------------------------------------------------------
+No results in this report were fabricated; every value comes from an actual
+mvn clean test run and an actual CLI execution performed during this session.
+Nothing was committed or pushed.

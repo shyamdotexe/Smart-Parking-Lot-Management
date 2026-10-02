@@ -1,0 +1,132 @@
+================================================================================
+COMPLETE PACKAGE STRUCTURE - Smart Parking Lot Management System
+================================================================================
+Root          : C:\Smart-Parking-Lot-Management
+Build         : Maven (pom.xml), Java 17 source/target
+Base package  : com.parkinglot
+Source roots  : src/main/java (production), src/test/java (tests)
+Total .java   : 29  (20 production + 9 test)
+
+================================================================================
+1. PRODUCTION CODE  -  src/main/java
+================================================================================
+
+src/main/java/
+└── com/
+    └── parkinglot/
+        ├── billing/                   (pricing strategies)
+        │   ├── FirstHourFreePricing.java    [class]
+        │   ├── FlatRatePricing.java         [class]
+        │   ├── HourlyPricing.java           [class]
+        │   └── Payable.java                 [INTERFACE]
+        │
+        ├── core/                      (domain core / state)
+        │   ├── Floor.java                   [class]
+        │   └── ParkingLot.java              [class, singleton]
+        │
+        ├── exception/                 (custom checked exceptions)
+        │   ├── InvalidTicketException.java  [class -> extends Exception]
+        │   └── ParkingLotFullException.java [class -> extends Exception]
+        │
+        ├── main/                      (console application)
+        │   └── ParkingLotCli.java           [class, has main()]
+        │
+        ├── spot/                      (parking spot hierarchy)
+        │   ├── CompactSpot.java             [class]
+        │   ├── HandicappedSpot.java         [class]
+        │   ├── LargeSpot.java               [class]
+        │   ├── ParkingSpot.java             [ABSTRACT class]
+        │   └── SpotType.java                [enum]
+        │
+        ├── ticket/                    (stay ticket / billing bridge)
+        │   └── Ticket.java                  [class]
+        │
+        └── vehicle/                   (vehicle hierarchy)
+            ├── Bike.java                    [class]
+            ├── Car.java                     [class]
+            ├── Truck.java                   [class]
+            ├── Vehicle.java                 [ABSTRACT class]
+            └── VehicleType.java             [enum]
+
+---- Production type counts ----
+Interfaces ......... 1  (Payable)
+Abstract classes ... 2  (ParkingSpot, Vehicle)
+Concrete classes ... 15
+Enums .............. 2  (SpotType, VehicleType)
+Exception classes .. 2  (both extend java.lang.Exception)
+Files .............. 20
+
+================================================================================
+2. TEST CODE  -  src/test/java
+================================================================================
+
+src/test/java/
+└── com/
+    └── parkinglot/
+        ├── billing/
+        │   ├── FirstHourFreePricingTest.java   [test class]
+        │   ├── FlatRatePricingTest.java         [test class]
+        │   ├── HourlyPricingTest.java           [test class]
+        │   └── PricingStrategyTest.java         [test class]
+        │
+        ├── core/
+        │   ├── ParkingLotCoreTest.java          [test class]
+        │   └── ReleaseValidationTest.java       [test class]
+        │
+        ├── spot/
+        │   └── ParkingSpotTest.java             [test class]
+        │
+        ├── ticket/
+        │   └── TicketTest.java                  [test class]
+        │
+        └── vehicle/
+            └── VehicleTest.java                 [test class]
+
+---- Test type counts ----
+Top-level test classes .......... 9
+Nested test-double classes ...... 4 (all private static, see below)
+Files ........................... 9
+
+Nested (inner) test-double classes, declared inside test files:
+  ParkingSpotTest#StubVehicle   extends Vehicle
+  ParkingSpotTest#StubSpot      extends ParkingSpot   (abstract method implemented)
+  TicketTest#TestVehicle        extends Vehicle
+  TicketTest#TestSpot           extends ParkingSpot   (abstract method implemented)
+  VehicleTest#StubVehicle       extends Vehicle
+
+Note: the test packages deliberately mirror the production packages
+(billing, core, spot, ticket, vehicle). There is no test for main/ (the CLI)
+and none for exception/.
+
+================================================================================
+3. DIRECTORY TREE (loose, paths only)
+================================================================================
+src/main/java/com/parkinglot/billing/FirstHourFreePricing.java
+src/main/java/com/parkinglot/billing/FlatRatePricing.java
+src/main/java/com/parkinglot/billing/HourlyPricing.java
+src/main/java/com/parkinglot/billing/Payable.java
+src/main/java/com/parkinglot/core/Floor.java
+src/main/java/com/parkinglot/core/ParkingLot.java
+src/main/java/com/parkinglot/exception/InvalidTicketException.java
+src/main/java/com/parkinglot/exception/ParkingLotFullException.java
+src/main/java/com/parkinglot/main/ParkingLotCli.java
+src/main/java/com/parkinglot/spot/CompactSpot.java
+src/main/java/com/parkinglot/spot/HandicappedSpot.java
+src/main/java/com/parkinglot/spot/LargeSpot.java
+src/main/java/com/parkinglot/spot/ParkingSpot.java
+src/main/java/com/parkinglot/spot/SpotType.java
+src/main/java/com/parkinglot/ticket/Ticket.java
+src/main/java/com/parkinglot/vehicle/Bike.java
+src/main/java/com/parkinglot/vehicle/Car.java
+src/main/java/com/parkinglot/vehicle/Truck.java
+src/main/java/com/parkinglot/vehicle/Vehicle.java
+src/main/java/com/parkinglot/vehicle/VehicleType.java
+src/test/java/com/parkinglot/billing/FirstHourFreePricingTest.java
+src/test/java/com/parkinglot/billing/FlatRatePricingTest.java
+src/test/java/com/parkinglot/billing/HourlyPricingTest.java
+src/test/java/com/parkinglot/billing/PricingStrategyTest.java
+src/test/java/com/parkinglot/core/ParkingLotCoreTest.java
+src/test/java/com/parkinglot/core/ReleaseValidationTest.java
+src/test/java/com/parkinglot/spot/ParkingSpotTest.java
+src/test/java/com/parkinglot/ticket/TicketTest.java
+src/test/java/com/parkinglot/vehicle/VehicleTest.java

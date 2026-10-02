@@ -5,6 +5,7 @@ import com.parkinglot.spot.ParkingSpot;
 import com.parkinglot.vehicle.Vehicle;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -16,10 +17,12 @@ public class ParkingLot {
 
     private final TreeMap<Integer, Floor> floors;
     private final Set<String> parkedVehicleNumbers;
+    private final Map<String, ParkingSpot> vehicleToSpot;
 
     private ParkingLot() {
         floors = new TreeMap<>();
         parkedVehicleNumbers = new HashSet<>();
+        vehicleToSpot = new HashMap<>();
     }
 
     public static ParkingLot getInstance() {
@@ -32,6 +35,7 @@ public class ParkingLot {
     void reset() {
         floors.clear();
         parkedVehicleNumbers.clear();
+        vehicleToSpot.clear();
     }
 
     public void addFloor(Floor floor) {
@@ -69,6 +73,7 @@ public class ParkingLot {
 
         floors.get(spot.getFloorNumber()).occupySpot(spot);
         parkedVehicleNumbers.add(vehicle.getVehicleNumber());
+        vehicleToSpot.put(vehicle.getVehicleNumber(), spot);
         return spot;
     }
 
@@ -84,8 +89,16 @@ public class ParkingLot {
         if (floor == null) {
             throw new IllegalArgumentException("No floor exists for the supplied parking spot.");
         }
+
+        ParkingSpot occupiedSpot = vehicleToSpot.get(vehicleNumber);
+        if (occupiedSpot == null || occupiedSpot.getFloorNumber() != spot.getFloorNumber()
+                || occupiedSpot.getSpotId() != spot.getSpotId()) {
+            throw new IllegalArgumentException("Vehicle release failed: vehicle does not match the vehicle parked at the specified spot.");
+        }
+
         floor.releaseSpot(spot);
         parkedVehicleNumbers.remove(vehicleNumber);
+        vehicleToSpot.remove(vehicleNumber);
     }
 
     public boolean isVehicleParked(String vehicleNumber) {

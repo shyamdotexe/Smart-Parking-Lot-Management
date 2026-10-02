@@ -1,0 +1,231 @@
+================================================================================
+CLASS INVENTORY - Smart Parking Lot Management System
+================================================================================
+Legend: + public   - private   # protected   ~ package-private
+
+================================================================================
+PART 1 - INVENTORY TABLE (PRODUCTION)
+================================================================================
+| Package            | Type             | Name                     | Abstract? | Extends                 | Implements                       |
+|--------------------|------------------|--------------------------|-----------|-------------------------|----------------------------------|
+| com.parkinglot.billing  | interface | Payable              | n/a  | -          | -                          |
+| com.parkinglot.billing  | class     | FirstHourFreePricing | no   | Object     | Payable                    |
+| com.parkinglot.billing  | class     | FlatRatePricing      | no   | Object     | Payable                    |
+| com.parkinglot.billing  | class     | HourlyPricing        | no   | Object     | Payable                    |
+| com.parkinglot.core     | class     | Floor                | no   | Object     | -                          |
+| com.parkinglot.core     | class     | ParkingLot           | no   | Object     | - (singleton)              |
+| com.parkinglot.exception| class     | InvalidTicketException  | no | Exception | -                        |
+| com.parkinglot.exception| class     | ParkingLotFullException | no | Exception | -                        |
+| com.parkinglot.main     | class     | ParkingLotCli        | no   | Object     | -                          |
+| com.parkinglot.spot     | abstract  | ParkingSpot          | YES  | Object     | Comparable<ParkingSpot>    |
+| com.parkinglot.spot     | class     | CompactSpot          | no   | ParkingSpot| -                          |
+| com.parkinglot.spot     | class     | LargeSpot            | no   | ParkingSpot| -                          |
+| com.parkinglot.spot     | class     | HandicappedSpot      | no   | ParkingSpot| -                          |
+| com.parkinglot.spot     | enum      | SpotType             | n/a  | Enum       | Comparable/Serializable (implicit) |
+| com.parkinglot.ticket   | class     | Ticket               | no   | Object     | -                          |
+| com.parkinglot.vehicle  | abstract  | Vehicle              | YES  | Object     | -                          |
+| com.parkinglot.vehicle  | class     | Bike                 | no   | Vehicle    | -                          |
+| com.parkinglot.vehicle  | class     | Car                  | no   | Vehicle    | -                          |
+| com.parkinglot.vehicle  | class     | Truck                | no   | Vehicle    | -                          |
+| com.parkinglot.vehicle  | enum      | VehicleType          | n/a  | Enum       | Comparable/Serializable (implicit) |
+
+================================================================================
+PART 2 - INVENTORY TABLE (TEST CODE, SEPARATE)
+================================================================================
+| Package                 | Type  | Name                     | Abstract? | Extends | Implements |
+|-------------------------|-------|--------------------------|-----------|---------|------------|
+| com.parkinglot.billing  | class | FirstHourFreePricingTest | no        | Object  | -          |
+| com.parkinglot.billing  | class | FlatRatePricingTest      | no        | Object  | -          |
+| com.parkinglot.billing  | class | HourlyPricingTest        | no        | Object  | -          |
+| com.parkinglot.billing  | class | PricingStrategyTest      | no        | Object  | -          |
+| com.parkinglot.core     | class | ParkingLotCoreTest       | no        | Object  | -          |
+| com.parkinglot.core     | class | ReleaseValidationTest    | no        | Object  | -          |
+| com.parkinglot.spot     | class | ParkingSpotTest          | no        | Object  | -          |
+| com.parkinglot.ticket   | class | TicketTest               | no        | Object  | -          |
+| com.parkinglot.vehicle  | class | VehicleTest              | no        | Object  | -          |
+
+Nested test-double classes (inside the above test files):
+| Enclosing test         | Nested name   | Type  | Extends     | Implements |
+|------------------------|---------------|-------|-------------|------------|
+| ParkingSpotTest        | StubVehicle   | class | Vehicle     | -          |
+| ParkingSpotTest        | StubSpot      | class | ParkingSpot | -          |
+| TicketTest             | TestVehicle   | class | Vehicle     | -          |
+| TicketTest             | TestSpot      | class | ParkingSpot | -          |
+| VehicleTest            | StubVehicle   | class | Vehicle     | -          |
+
+================================================================================
+PART 3 - MEMBERS PER PRODUCTION CLASS
+================================================================================
+
+--- com.parkinglot.billing.Payable (interface) ---
++ calculateFee(long durationMinutes) : double
+
+--- com.parkinglot.billing.HourlyPricing (class, implements Payable) ---
+Static : + DEFAULT_RATE_PER_HOUR : double = 20.0   (public static final)
+Fields : - ratePerHour : double                     (private final)
+Ctors  : + HourlyPricing()
+         + HourlyPricing(double ratePerHour)
+Methods: + getRatePerHour() : double
+         + calculateFee(long durationMinutes) : double     (@Override)
+
+--- com.parkinglot.billing.FlatRatePricing (class, implements Payable) ---
+Static : + DEFAULT_FLAT_FEE : double = 50.0        (public static final)
+Fields : - flatFee : double                         (private final)
+Ctors  : + FlatRatePricing()
+         + FlatRatePricing(double flatFee)
+Methods: + getFlatFee() : double
+         + calculateFee(long durationMinutes) : double     (@Override)
+
+--- com.parkinglot.billing.FirstHourFreePricing (class, implements Payable) ---
+Static : + DEFAULT_RATE_PER_HOUR : double = 20.0   (public static final)
+         - FREE_MINUTES : long = 60                (private static final)
+Fields : - ratePerHour : double                     (private final)
+Ctors  : + FirstHourFreePricing()
+         + FirstHourFreePricing(double ratePerHour)
+Methods: + getRatePerHour() : double
+         + calculateFee(long durationMinutes) : double     (@Override)
+
+--- com.parkinglot.core.Floor (class) ---
+Fields : - floorNumber : int                              (private final)
+         - spots : ArrayList<ParkingSpot>                 (private final)
+         - availableSpots : PriorityQueue<ParkingSpot>    (private final)
+Ctors  : + Floor(int floorNumber)
+Methods: + addSpot(ParkingSpot spot) : void
+         + findNearestAvailableSpot(Vehicle vehicle) : ParkingSpot
+         + occupySpot(ParkingSpot spot) : void
+         + releaseSpot(ParkingSpot spot) : void
+         + getAvailableSpotCount() : int
+         + getTotalSpotCount() : int
+         + getFloorNumber() : int
+         + getSpots() : List<ParkingSpot>   (unmodifiable view)
+         - validateSpot(ParkingSpot spot) : void          (private)
+
+--- com.parkinglot.core.ParkingLot (class, SINGLETON) ---
+Static : - INSTANCE : ParkingLot                   (private static final, eagerly created)
+Fields : - floors : TreeMap<Integer, Floor>        (private final)
+         - parkedVehicleNumbers : Set<String>      (private final)
+         - vehicleToSpot : Map<String, ParkingSpot>(private final)
+Ctors  : - ParkingLot()                            (private, singleton)
+Methods: + static getInstance() : ParkingLot       (public static)
+         ~ reset() : void                          (PACKAGE-PRIVATE, for tests)
+         + addFloor(Floor floor) : void
+         + findNearestAvailableSpot(Vehicle vehicle) : ParkingSpot
+         + parkVehicle(Vehicle vehicle) : ParkingSpot throws ParkingLotFullException
+         + releaseVehicle(String vehicleNumber, ParkingSpot spot) : void
+         + isVehicleParked(String vehicleNumber) : boolean
+         + getTotalAvailableSpots() : int
+         + getTotalSpots() : int
+         + getFloors() : Map<Integer, Floor>       (unmodifiable view)
+
+--- com.parkinglot.exception.InvalidTicketException (class) ---
+Extends: java.lang.Exception (checked)
+Ctors  : + InvalidTicketException(String message)
+
+--- com.parkinglot.exception.ParkingLotFullException (class) ---
+Extends: java.lang.Exception (checked)
+Ctors  : + ParkingLotFullException(String message)
+
+--- com.parkinglot.main.ParkingLotCli (class) ---
+Fields : - parkingLot : ParkingLot                 (private final; from ParkingLot.getInstance())
+         - scanner : Scanner                        (private final; System.in)
+Ctors  : + ParkingLotCli()
+Methods: + static main(String[] args) : void        (public static - program entry point)
+         - initializeSampleParkingLot() : void
+         - run() : void
+         - printMenu() : void
+         - parkVehicle() : void
+         - createVehicle(String vehicleNumber, String vehicleType) : Vehicle
+         - releaseVehicle() : void
+         - readNumber() : Integer
+         - findSpot(int floorNumber, int spotId) : ParkingSpot
+         - displayParkingStatus() : void
+         (all UI methods are private)
+
+--- com.parkinglot.spot.ParkingSpot (ABSTRACT class; implements Comparable<ParkingSpot>) ---
+Fields : - spotId : int          (private)
+         - floorNumber : int     (private)
+         - spotType : SpotType   (private)
+         - occupied : boolean    (private)
+Ctors  : + ParkingSpot(int spotId, int floorNumber, SpotType spotType)   (protected-by-convention public)
+Methods: + getSpotId() : int
+         + getFloorNumber() : int
+         + getSpotType() : SpotType
+         + isOccupied() : boolean
+         + occupySpot() : void
+         + releaseSpot() : void
+         + canFitVehicle(Vehicle vehicle) : boolean      [ABSTRACT]
+         + compareTo(ParkingSpot other) : int            (@Override)
+
+--- com.parkinglot.spot.CompactSpot (class, extends ParkingSpot) ---
+Ctors  : + CompactSpot(int spotId, int floorNumber)   -> super(..., SpotType.COMPACT)
+Methods: + canFitVehicle(Vehicle vehicle) : boolean   (@Override; BIKE or CAR only)
+
+--- com.parkinglot.spot.LargeSpot (class, extends ParkingSpot) ---
+Ctors  : + LargeSpot(int spotId, int floorNumber)     -> super(..., SpotType.LARGE)
+Methods: + canFitVehicle(Vehicle vehicle) : boolean   (@Override; any non-null vehicle)
+
+--- com.parkinglot.spot.HandicappedSpot (class, extends ParkingSpot) ---
+Ctors  : + HandicappedSpot(int spotId, int floorNumber) -> super(..., SpotType.HANDICAPPED)
+Methods: + canFitVehicle(Vehicle vehicle) : boolean   (@Override; any non-null vehicle)
+
+--- com.parkinglot.spot.SpotType (enum) ---
+Constants: COMPACT, LARGE, HANDICAPPED
+
+--- com.parkinglot.ticket.Ticket (class) ---
+Fields : - ticketId : int            (private final)
+         - vehicle : Vehicle         (private final)
+         - spot : ParkingSpot        (private final)
+         - entryTime : LocalDateTime (private final)
+         - exitTime : LocalDateTime  (private)
+         - settled : boolean         (private)
+Ctors  : + Ticket(int ticketId, Vehicle vehicle, ParkingSpot spot)
+         + Ticket(int ticketId, Vehicle vehicle, ParkingSpot spot, LocalDateTime entryTime)
+Methods: + getTicketId() : int
+         + getVehicle() : Vehicle
+         + getSpot() : ParkingSpot
+         + getEntryTime() : LocalDateTime
+         + getExitTime() : LocalDateTime
+         + isSettled() : boolean
+         + getDurationMinutes(LocalDateTime at) : long
+         + settle(Payable pricing) : double throws InvalidTicketException
+         + settle(Payable pricing, LocalDateTime at) : double throws InvalidTicketException
+         + equals(Object o) : boolean          (@Override)
+         + hashCode() : int                    (@Override)
+         + toString() : String                 (@Override)
+
+--- com.parkinglot.vehicle.Vehicle (ABSTRACT class) ---
+Fields : - vehicleNumber : String   (private)
+         - vehicleType : VehicleType (private)
+Ctors  : + Vehicle(String vehicleNumber, VehicleType vehicleType)
+Methods: + getVehicleNumber() : String
+         + getVehicleType() : VehicleType
+         + toString() : String                 (@Override)
+         (No abstract methods declared.)
+
+--- com.parkinglot.vehicle.Bike / Car / Truck (classes, extend Vehicle) ---
+Ctors  : + Bike(String vehicleNumber)  -> super(vehicleNumber, VehicleType.BIKE)
+         + Car(String vehicleNumber)   -> super(vehicleNumber, VehicleType.CAR)
+         + Truck(String vehicleNumber) -> super(vehicleNumber, VehicleType.TRUCK)
+No additional fields or methods.
+
+--- com.parkinglot.vehicle.VehicleType (enum) ---
+Constants: BIKE, CAR, TRUCK
+
+================================================================================
+PART 4 - TEST CLASSES: important members (test code)
+================================================================================
+All test classes are package-private and use JUnit 5 (@Test, @BeforeEach).
+Shared state: ParkingLotCoreTest and ReleaseValidationTest hold a
+`ParkingLot parkingLot` field set from ParkingLot.getInstance() then reset()
+in @BeforeEach.
+
+Test class -> SUT exercised:
+  FirstHourFreePricingTest  -> FirstHourFreePricing
+  FlatRatePricingTest       -> FlatRatePricing
+  HourlyPricingTest         -> HourlyPricing
+  PricingStrategyTest       -> Hourly/Flat/FirstHourFree via Payable (strategy swap)
+  ParkingLotCoreTest        -> ParkingLot, Floor, CompactSpot, LargeSpot, Bike, Car, Truck
+  ReleaseValidationTest     -> ParkingLot, Floor, CompactSpot, Bike, Car
+  ParkingSpotTest           -> ParkingSpot (+ SpotType, PriorityQueue ordering)
+  TicketTest                -> Ticket (+ all three pricing strategies, InvalidTicketException)
+  VehicleTest               -> Vehicle (+ VehicleType)

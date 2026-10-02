@@ -1,0 +1,49 @@
+================================================================================
+INHERITANCE ANALYSIS  (every `extends` in src/)
+================================================================================
+
+================================================================================
+A. PRODUCTION INHERITANCE
+================================================================================
+| Parent / Superclass            | Child / Subclass            | Relationship | Notes                                             |
+|--------------------------------|-----------------------------|--------------|---------------------------------------------------|
+| com.parkinglot.vehicle.Vehicle | com.parkinglot.vehicle.Bike | extends      | ctor: super(vehicleNumber, VehicleType.BIKE)      |
+| com.parkinglot.vehicle.Vehicle | com.parkinglot.vehicle.Car  | extends      | ctor: super(vehicleNumber, VehicleType.CAR)       |
+| com.parkinglot.vehicle.Vehicle | com.parkinglot.vehicle.Truck| extends      | ctor: super(vehicleNumber, VehicleType.TRUCK)     |
+| com.parkinglot.spot.ParkingSpot| com.parkinglot.spot.CompactSpot     | extends | implements canFitVehicle (BIKE+CAR only)          |
+| com.parkinglot.spot.ParkingSpot| com.parkinglot.spot.LargeSpot       | extends | implements canFitVehicle (fits any vehicle)       |
+| com.parkinglot.spot.ParkingSpot| com.parkinglot.spot.HandicappedSpot | extends | implements canFitVehicle (fits any vehicle)       |
+| java.lang.Exception            | com.parkinglot.exception.InvalidTicketException  | extends | checked; ctor(String message) -> super(message)   |
+| java.lang.Exception            | com.parkinglot.exception.ParkingLotFullException | extends | checked; ctor(String message) -> super(message)   |
+
+Indirect / library-descendant chains (from the table above):
+  java.lang.Object -> java.lang.Throwable -> java.lang.Exception
+                   -> com.parkinglot.exception.InvalidTicketException
+                   -> com.parkinglot.exception.ParkingLotFullException
+  java.lang.Object -> com.parkinglot.vehicle.Vehicle -> Bike / Car / Truck
+  java.lang.Object -> com.parkinglot.spot.ParkingSpot -> CompactSpot / LargeSpot / HandicappedSpot
+  (ParkingSpot also implements java.lang.Comparable - see interfaces.txt, not an `extends`.)
+
+================================================================================
+B. TEST INHERITANCE (test code only - keep separate from production)
+================================================================================
+| Parent / Superclass            | Child / Subclass                        | Relationship | Notes                                  |
+|--------------------------------|-----------------------------------------|--------------|----------------------------------------|
+| com.parkinglot.vehicle.Vehicle | ParkingSpotTest#StubVehicle             | extends      | private static nested test double      |
+| com.parkinglot.spot.ParkingSpot| ParkingSpotTest#StubSpot                | extends      | private static nested; overrides canFitVehicle |
+| com.parkinglot.vehicle.Vehicle | TicketTest#TestVehicle                  | extends      | private static nested test double      |
+| com.parkinglot.spot.ParkingSpot| TicketTest#TestSpot                     | extends      | private static nested; overrides canFitVehicle |
+| com.parkinglot.vehicle.Vehicle | VehicleTest#StubVehicle                 | extends      | private static nested test double      |
+
+The 9 top-level test classes do NOT extend any class. They are plain
+package-private classes (no superclass other than java.lang.Object).
+
+================================================================================
+C. SUPERTYPE DESIGN NOTE
+================================================================================
+- Vehicle IS declared `abstract` but declares NO abstract methods. It cannot be
+  instantiated, yet all its methods are concrete. Subclasses only supply a
+  VehicleType via the super(...) call.
+- ParkingSpot IS declared `abstract` AND declares one abstract method:
+      public abstract boolean canFitVehicle(Vehicle vehicle);
+  This is the only true abstract method in the project.

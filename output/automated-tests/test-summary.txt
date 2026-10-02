@@ -1,0 +1,32 @@
+TEST SUMMARY - extracted from full-test-output.txt (final `mvn clean test`)
+===========================================================================
+Command : mvn clean test
+Finished: 2026-10-02T23:43:54+05:30
+
+RESULTS LINE (from actual Maven output):
+[INFO] Tests run: 94, Failures: 0, Errors: 0, Skipped: 0
+
+BUILD RESULT:
+[INFO] BUILD SUCCESS
+
+--------------
+Tests run : 94
+Failures  : 0
+Errors    : 0
+Skipped   : 0
+BUILD     : SUCCESS
+--------------
+
+Per-class breakdown (from actual Maven output):
+FirstHourFreePricingTest : Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+FlatRatePricingTest      : Tests run: 8,  Failures: 0, Errors: 0, Skipped: 0
+HourlyPricingTest        : Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
+PricingStrategyTest      : Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+ParkingLotCoreTest       : Tests run: 7,  Failures: 0, Errors: 0, Skipped: 0
+ReleaseValidationTest    : Tests run: 4,  Failures: 0, Errors: 0, Skipped: 0
+ParkingSpotTest          : Tests run: 13, Failures: 0, Errors: 0, Skipped: 0
+TicketTest               : Tests run: 16, Failures: 0, Errors: 0, Skipped: 0
+VehicleTest              : Tests run: 6,  Failures: 0, Errors: 0, Skipped: 0
+
+All values above are copied from the real `mvn clean test` execution output
+stored in full-test-output.txt. Nothing in this file was hand-fabricated.

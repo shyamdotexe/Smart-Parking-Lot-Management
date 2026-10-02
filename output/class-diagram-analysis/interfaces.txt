@@ -1,0 +1,71 @@
+================================================================================
+INTERFACE & ABSTRACT CLASS ANALYSIS
+================================================================================
+
+================================================================================
+A. INTERFACES DEFINED IN THE PROJECT
+================================================================================
+Interface : com.parkinglot.billing.Payable
+Package   : com.parkinglot.billing
+Kind      : interface (no `extends` of another interface)
+File      : src/main/java/com/parkinglot/billing/Payable.java
+Methods   :
+    + calculateFee(long durationMinutes) : double     (public abstract, implicit)
+Implementing classes (3, all concrete, all in com.parkinglot.billing):
+    - com.parkinglot.billing.HourlyPricing
+    - com.parkinglot.billing.FlatRatePricing
+    - com.parkinglot.billing.FirstHourFreePricing
+
+Interfaces that extend other interfaces (`interface X extends Y`):
+    NONE in this project. Payable is the only declared interface and it does not
+    extend anything.
+
+Interfaces IMPLEMENTED from the Java library:
+    - com.parkinglot.spot.ParkingSpot  implements  java.lang.Comparable<ParkingSpot>
+      (see section C below - this is an `implements`, not an `extends`.)
+
+================================================================================
+B. ABSTRACT CLASSES DEFINED IN THE PROJECT
+================================================================================
+Abstract class : com.parkinglot.spot.ParkingSpot
+Package        : com.parkinglot.spot
+Parent class   : java.lang.Object (no explicit extends)
+File           : src/main/java/com/parkinglot/spot/ParkingSpot.java
+Declaration    : public abstract class ParkingSpot implements Comparable<ParkingSpot>
+Abstract methods:
+    + canFitVehicle(Vehicle vehicle) : boolean
+Concrete subclasses (3):
+    - com.parkinglot.spot.CompactSpot
+    - com.parkinglot.spot.LargeSpot
+    - com.parkinglot.spot.HandicappedSpot
+
+Abstract class : com.parkinglot.vehicle.Vehicle
+Package        : com.parkinglot.vehicle
+Parent class   : java.lang.Object (no explicit extends)
+File           : src/main/java/com/parkinglot/vehicle/Vehicle.java
+Declaration    : public abstract class Vehicle
+Abstract methods:
+    NONE  (the class is abstract but has no abstract methods)
+Concrete subclasses (3):
+    - com.parkinglot.vehicle.Bike
+    - com.parkinglot.vehicle.Car
+    - com.parkinglot.vehicle.Truck
+
+================================================================================
+C. LIBRARY INTERFACES IMPLEMENTED BY PRODUCTION CLASSES
+================================================================================
+| Interface (library)              | Implementing class              | Note                       |
+|----------------------------------|---------------------------------|----------------------------|
+| java.lang.Comparable<ParkingSpot>| com.parkinglot.spot.ParkingSpot | compareTo orders by floor, then spotId |
+
+(Enums SpotType / VehicleType implicitly extend java.lang.Enum and implement
+ java.lang.Comparable / Serializable, but this is compiler-generated and not
+ written in the source.)
+
+================================================================================
+D. SUMMARY
+================================================================================
+Interfaces declared ............. 1  (Payable)
+Interfaces extending interfaces .. 0
+Abstract classes ................. 2  (ParkingSpot, Vehicle)
+Abstract methods ................. 1  (ParkingSpot.canFitVehicle)

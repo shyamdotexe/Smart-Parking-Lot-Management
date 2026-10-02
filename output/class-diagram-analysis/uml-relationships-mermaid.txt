@@ -1,0 +1,479 @@
+================================================================================
+UML-READY RELATIONSHIP DATA (Mermaid syntax)
+================================================================================
+Notation used:
+  A <|-- B   generalization / extends
+  A <|.. B   realization / implements
+  A *-- B    composition
+  A o-- B    aggregation
+  A --> B    association
+  A ..> B    dependency
+  A <-- B    association (reverse direction, drawn only when clearer)
+
+================================================================================
+PART 1 - FLAT RELATIONSHIP LIST (PRODUCTION CODE)
+================================================================================
+
+-- GENERALIZATION (extends) --
+Vehicle <|-- Bike
+Vehicle <|-- Car
+Vehicle <|-- Truck
+ParkingSpot <|-- CompactSpot
+ParkingSpot <|-- LargeSpot
+ParkingSpot <|-- HandicappedSpot
+Exception <|-- InvalidTicketException
+Exception <|-- ParkingLotFullException
+
+-- REALIZATION (implements) --
+Payable <|.. HourlyPricing
+Payable <|.. FlatRatePricing
+Payable <|.. FirstHourFreePricing
+Comparable~ParkingSpot~ <|.. ParkingSpot
+
+-- AGGREGATION --
+ParkingLot "1" o-- "0..*" Floor
+Floor "1" o-- "0..*" ParkingSpot
+
+-- COMPOSITION --
+%% none between domain classes (see relationships.txt section B)
+
+-- ASSOCIATION --
+ParkingLot "1" --> "0..*" ParkingSpot : vehicleToSpot
+ParkingSpot "1" --> "1" SpotType : spotType
+Vehicle "1" --> "1" VehicleType : vehicleType
+Ticket "1" --> "1" Vehicle : vehicle
+Ticket "1" --> "1" ParkingSpot : spot
+ParkingLotCli "1" --> "1" ParkingLot : parkingLot
+ParkingLotCli "1" --> "1" Scanner : scanner
+ParkingLot --> ParkingLot : INSTANCE  (static singleton self-reference)
+
+-- DEPENDENCY --
+ParkingLot ..> Vehicle
+ParkingLot ..> ParkingLotFullException
+ParkingLot ..> Floor
+Floor ..> Vehicle
+Floor ..> ParkingSpot
+ParkingSpot ..> Vehicle
+CompactSpot ..> Vehicle
+CompactSpot ..> VehicleType
+LargeSpot ..> Vehicle
+HandicappedSpot ..> Vehicle
+Ticket ..> Payable
+Ticket ..> InvalidTicketException
+Ticket ..> LocalDateTime
+Ticket ..> Duration
+ParkingLotCli ..> Floor
+ParkingLotCli ..> ParkingSpot
+ParkingLotCli ..> Bike
+ParkingLotCli ..> Car
+ParkingLotCli ..> Truck
+ParkingLotCli ..> Vehicle
+ParkingLotCli ..> ParkingLotFullException
+ParkingLotCli ..> Scanner
+
+-- TEST CODE ONLY (keep out of the production diagram) --
+Vehicle <|-- ParkingSpotTest_StubVehicle
+ParkingSpot <|-- ParkingSpotTest_StubSpot
+Vehicle <|-- TicketTest_TestVehicle
+ParkingSpot <|-- TicketTest_TestSpot
+Vehicle <|-- VehicleTest_StubVehicle
+
+================================================================================
+PART 2 - GROUPED BY MODULE / PACKAGE
+================================================================================
+
+--- com.parkinglot.vehicle ---
+Generalization : Vehicle <|-- Bike
+                 Vehicle <|-- Car
+                 Vehicle <|-- Truck
+Association    : Vehicle "1" --> "1" VehicleType
+Dependency     : (subtypes create themselves with VehicleType values)
+
+--- com.parkinglot.spot ---
+Generalization : ParkingSpot <|-- CompactSpot
+                 ParkingSpot <|-- LargeSpot
+                 ParkingSpot <|-- HandicappedSpot
+Realization    : Comparable~ParkingSpot~ <|.. ParkingSpot
+Association    : ParkingSpot "1" --> "1" SpotType
+Dependency     : ParkingSpot ..> Vehicle
+                 CompactSpot ..> Vehicle
+                 CompactSpot ..> VehicleType
+                 LargeSpot ..> Vehicle
+                 HandicappedSpot ..> Vehicle
+
+--- com.parkinglot.core ---
+Aggregation    : ParkingLot "1" o-- "0..*" Floor
+                 Floor "1" o-- "0..*" ParkingSpot
+Association    : ParkingLot "1" --> "0..*" ParkingSpot : vehicleToSpot
+                 ParkingLot --> ParkingLot : INSTANCE
+Dependency     : ParkingLot ..> Vehicle
+                 ParkingLot ..> ParkingLotFullException
+                 Floor ..> Vehicle
+                 Floor ..> ParkingSpot
+
+--- com.parkinglot.ticket ---
+Association    : Ticket "1" --> "1" Vehicle
+                 Ticket "1" --> "1" ParkingSpot
+Dependency     : Ticket ..> Payable
+                 Ticket ..> InvalidTicketException
+                 Ticket ..> LocalDateTime
+
+--- com.parkinglot.billing ---
+Realization    : Payable <|.. HourlyPricing
+                 Payable <|.. FlatRatePricing
+                 Payable <|.. FirstHourFreePricing
+(no associations; strategies are stateless w.r.t. the domain)
+
+--- com.parkinglot.exception ---
+Generalization : Exception <|-- InvalidTicketException
+                 Exception <|-- ParkingLotFullException
+
+--- com.parkinglot.main ---
+Association    : ParkingLotCli "1" --> "1" ParkingLot
+                 ParkingLotCli "1" --> "1" Scanner
+Dependency     : ParkingLotCli ..> Floor
+                 ParkingLotCli ..> ParkingSpot
+                 ParkingLotCli ..> Bike / Car / Truck
+                 ParkingLotCli ..> Vehicle
+                 ParkingLotCli ..> ParkingLotFullException
+
+================================================================================
+PART 3 - COMPLETE MERMAID CLASS DIAGRAM (PRODUCTION)
+================================================================================
+```mermaid
+classDiagram
+    direction LR
+
+    class Payable {
+        <<interface>>
+        +calculateFee(long durationMinutes) double
+    }
+
+    class HourlyPricing {
+        +double DEFAULT_RATE_PER_HOUR$
+        -double ratePerHour
+        +HourlyPricing()
+        +HourlyPricing(double ratePerHour)
+        +getRatePerHour() double
+        +calculateFee(long durationMinutes) double
+    }
+
+    class FlatRatePricing {
+        +double DEFAULT_FLAT_FEE$
+        -double flatFee
+        +FlatRatePricing()
+        +FlatRatePricing(double flatFee)
+        +getFlatFee() double
+        +calculateFee(long durationMinutes) double
+    }
+
+    class FirstHourFreePricing {
+        +double DEFAULT_RATE_PER_HOUR$
+        -long FREE_MINUTES$
+        -double ratePerHour
+        +FirstHourFreePricing()
+        +FirstHourFreePricing(double ratePerHour)
+        +getRatePerHour() double
+        +calculateFee(long durationMinutes) double
+    }
+
+    class Vehicle {
+        <<abstract>>
+        -String vehicleNumber
+        -VehicleType vehicleType
+        +Vehicle(String vehicleNumber, VehicleType vehicleType)
+        +getVehicleNumber() String
+        +getVehicleType() VehicleType
+        +toString() String
+    }
+
+    class Bike {
+        +Bike(String vehicleNumber)
+    }
+
+    class Car {
+        +Car(String vehicleNumber)
+    }
+
+    class Truck {
+        +Truck(String vehicleNumber)
+    }
+
+    class VehicleType {
+        <<enumeration>>
+        BIKE
+        CAR
+        TRUCK
+    }
+
+    class ParkingSpot {
+        <<abstract>>
+        -int spotId
+        -int floorNumber
+        -SpotType spotType
+        -boolean occupied
+        +ParkingSpot(int spotId, int floorNumber, SpotType spotType)
+        +getSpotId() int
+        +getFloorNumber() int
+        +getSpotType() SpotType
+        +isOccupied() boolean
+        +occupySpot() void
+        +releaseSpot() void
+        +canFitVehicle(Vehicle vehicle) boolean*
+        +compareTo(ParkingSpot other) int
+    }
+
+    class CompactSpot {
+        +CompactSpot(int spotId, int floorNumber)
+        +canFitVehicle(Vehicle vehicle) boolean
+    }
+
+    class LargeSpot {
+        +LargeSpot(int spotId, int floorNumber)
+        +canFitVehicle(Vehicle vehicle) boolean
+    }
+
+    class HandicappedSpot {
+        +HandicappedSpot(int spotId, int floorNumber)
+        +canFitVehicle(Vehicle vehicle) boolean
+    }
+
+    class SpotType {
+        <<enumeration>>
+        COMPACT
+        LARGE
+        HANDICAPPED
+    }
+
+    class Floor {
+        -int floorNumber
+        -ArrayList~ParkingSpot~ spots
+        -PriorityQueue~ParkingSpot~ availableSpots
+        +Floor(int floorNumber)
+        +addSpot(ParkingSpot spot) void
+        +findNearestAvailableSpot(Vehicle vehicle) ParkingSpot
+        +occupySpot(ParkingSpot spot) void
+        +releaseSpot(ParkingSpot spot) void
+        +getAvailableSpotCount() int
+        +getTotalSpotCount() int
+        +getFloorNumber() int
+        +getSpots() List~ParkingSpot~
+        -validateSpot(ParkingSpot spot) void
+    }
+
+    class ParkingLot {
+        -ParkingLot INSTANCE$
+        -TreeMap~Integer, Floor~ floors
+        -Set~String~ parkedVehicleNumbers
+        -Map~String, ParkingSpot~ vehicleToSpot
+        -ParkingLot()
+        +getInstance() ParkingLot$
+        +addFloor(Floor floor) void
+        +findNearestAvailableSpot(Vehicle vehicle) ParkingSpot
+        +parkVehicle(Vehicle vehicle) ParkingSpot
+        +releaseVehicle(String vehicleNumber, ParkingSpot spot) void
+        +isVehicleParked(String vehicleNumber) boolean
+        +getTotalAvailableSpots() int
+        +getTotalSpots() int
+        +getFloors() Map~Integer, Floor~
+    }
+
+    class Ticket {
+        -int ticketId
+        -Vehicle vehicle
+        -ParkingSpot spot
+        -LocalDateTime entryTime
+        -LocalDateTime exitTime
+        -boolean settled
+        +Ticket(int ticketId, Vehicle vehicle, ParkingSpot spot)
+        +Ticket(int ticketId, Vehicle vehicle, ParkingSpot spot, LocalDateTime entryTime)
+        +getTicketId() int
+        +getVehicle() Vehicle
+        +getSpot() ParkingSpot
+        +getEntryTime() LocalDateTime
+        +getExitTime() LocalDateTime
+        +isSettled() boolean
+        +getDurationMinutes(LocalDateTime at) long
+        +settle(Payable pricing) double
+        +settle(Payable pricing, LocalDateTime at) double
+        +equals(Object o) boolean
+        +hashCode() int
+        +toString() String
+    }
+
+    class InvalidTicketException {
+        +InvalidTicketException(String message)
+    }
+
+    class ParkingLotFullException {
+        +ParkingLotFullException(String message)
+    }
+
+    class ParkingLotCli {
+        -ParkingLot parkingLot
+        -Scanner scanner
+        +ParkingLotCli()
+        +main(String[] args) void$
+        -initializeSampleParkingLot() void
+        -run() void
+        -printMenu() void
+        -parkVehicle() void
+        -createVehicle(String vehicleNumber, String vehicleType) Vehicle
+        -releaseVehicle() void
+        -readNumber() Integer
+        -findSpot(int floorNumber, int spotId) ParkingSpot
+        -displayParkingStatus() void
+    }
+
+    %% ---- billing ----
+    Payable <|.. HourlyPricing
+    Payable <|.. FlatRatePricing
+    Payable <|.. FirstHourFreePricing
+
+    %% ---- vehicles ----
+    Vehicle <|-- Bike
+    Vehicle <|-- Car
+    Vehicle <|-- Truck
+    Vehicle "1" --> "1" VehicleType : type
+
+    %% ---- spots ----
+    ParkingSpot <|-- CompactSpot
+    ParkingSpot <|-- LargeSpot
+    ParkingSpot <|-- HandicappedSpot
+    ParkingSpot "1" --> "1" SpotType : type
+    ParkingSpot ..> Vehicle : canFitVehicle()
+
+    %% ---- core ----
+    ParkingLot "1" o-- "0..*" Floor : floors
+    Floor "1" o-- "0..*" ParkingSpot : spots
+    ParkingLot "1" --> "0..*" ParkingSpot : vehicleToSpot
+    ParkingLot --> ParkingLot : INSTANCE
+    ParkingLot ..> Vehicle : parkVehicle()
+    ParkingLot ..> ParkingLotFullException
+    Floor ..> Vehicle : findNearest()
+
+    %% ---- ticket ----
+    Ticket "1" --> "1" Vehicle
+    Ticket "1" --> "1" ParkingSpot
+    Ticket ..> Payable : settle()
+    Ticket ..> InvalidTicketException
+
+    %% ---- exceptions ----
+    Exception <|-- InvalidTicketException
+    Exception <|-- ParkingLotFullException
+
+    %% ---- bootstrap / UI ----
+    ParkingLotCli "1" --> "1" ParkingLot
+    ParkingLotCli ..> Floor : creates
+    ParkingLotCli ..> ParkingSpot : creates
+    ParkingLotCli ..> Vehicle : creates
+```
+(* = abstract member; $ = static member)
+
+================================================================================
+PART 4 - MODULE-SIZED DIAGRAMS (for deciding report layout)
+================================================================================
+
+(4a) VEHICLE MODULE
+```mermaid
+classDiagram
+    class Vehicle { <<abstract>> -String vehicleNumber -VehicleType vehicleType +getVehicleNumber() String +getVehicleType() VehicleType }
+    class Bike
+    class Car
+    class Truck
+    class VehicleType { <<enumeration>> BIKE CAR TRUCK }
+    Vehicle <|-- Bike
+    Vehicle <|-- Car
+    Vehicle <|-- Truck
+    Vehicle "1" --> "1" VehicleType
+```
+
+(4b) SPOT MODULE
+```mermaid
+classDiagram
+    class ParkingSpot { <<abstract>> -int spotId -int floorNumber -SpotType spotType -boolean occupied +canFitVehicle(Vehicle) boolean* +compareTo(ParkingSpot) int }
+    class CompactSpot
+    class LargeSpot
+    class HandicappedSpot
+    class SpotType { <<enumeration>> COMPACT LARGE HANDICAPPED }
+    class Vehicle { <<abstract>> }
+    ParkingSpot <|-- CompactSpot
+    ParkingSpot <|-- LargeSpot
+    ParkingSpot <|-- HandicappedSpot
+    ParkingSpot "1" --> "1" SpotType
+    ParkingSpot ..> Vehicle : canFitVehicle()
+```
+
+(4c) CORE MODULE
+```mermaid
+classDiagram
+    class ParkingLot { -Map~String,ParkingSpot~ vehicleToSpot -TreeMap~Integer,Floor~ floors +parkVehicle(Vehicle) ParkingSpot +releaseVehicle(String,ParkingSpot) void +getInstance() ParkingLot$ }
+    class Floor { -ArrayList~ParkingSpot~ spots -PriorityQueue~ParkingSpot~ availableSpots +addSpot(ParkingSpot) void +findNearestAvailableSpot(Vehicle) ParkingSpot }
+    class ParkingSpot { <<abstract>> }
+    class Vehicle { <<abstract>> }
+    ParkingLot "1" o-- "0..*" Floor : floors
+    Floor "1" o-- "0..*" ParkingSpot : spots
+    ParkingLot "1" --> "0..*" ParkingSpot : vehicleToSpot
+    ParkingLot ..> Vehicle
+    Floor ..> Vehicle
+```
+
+(4d) TICKET MODULE
+```mermaid
+classDiagram
+    class Ticket { -int ticketId -Vehicle vehicle -ParkingSpot spot -LocalDateTime entryTime -LocalDateTime exitTime -boolean settled +settle(Payable) double +getDurationMinutes(LocalDateTime) long }
+    class Payable { <<interface>> +calculateFee(long) double }
+    class Vehicle { <<abstract>> }
+    class ParkingSpot { <<abstract>> }
+    class InvalidTicketException
+    Ticket "1" --> "1" Vehicle
+    Ticket "1" --> "1" ParkingSpot
+    Ticket ..> Payable
+    Ticket ..> InvalidTicketException
+```
+
+(4e) BILLING MODULE
+```mermaid
+classDiagram
+    class Payable { <<interface>> +calculateFee(long) double }
+    class HourlyPricing
+    class FlatRatePricing
+    class FirstHourFreePricing
+    Payable <|.. HourlyPricing
+    Payable <|.. FlatRatePricing
+    Payable <|.. FirstHourFreePricing
+```
+
+(4f) MAIN / CLI + EXCEPTIONS
+```mermaid
+classDiagram
+    class ParkingLotCli { +main(String[]) void$ -run() void -parkVehicle() void -releaseVehicle() void }
+    class ParkingLot
+    class Floor
+    class ParkingSpot { <<abstract>> }
+    class Vehicle { <<abstract>> }
+    class Exception
+    class ParkingLotFullException
+    class InvalidTicketException
+    ParkingLotCli "1" --> "1" ParkingLot
+    ParkingLotCli ..> Floor
+    ParkingLotCli ..> ParkingSpot
+    ParkingLotCli ..> Vehicle
+    Exception <|-- ParkingLotFullException
+    Exception <|-- InvalidTicketException
+```
+
+================================================================================
+PART 5 - RECOMMENDATION
+================================================================================
+Two layouts are viable:
+  Option 1 - ONE complete project class diagram (Part 3). Best for showing the
+             full architecture in one figure; 20 production types is still
+             readable in Mermaid with the classes collapsed.
+  Option 2 - SEPARATE diagrams per module (Part 4a-4f). Better for explaining
+             each concern (vehicles, spots, core, billing, tickets, CLI).
+
+Suggested final report approach: use Part 3 as the master overview, then include
+4a (vehicle), 4b (spot) and 4c (core) as zoomed-in views, because those three
+modules carry the real inheritance/aggregation structure. Billing (4e) and
+ticket (4d) are small enough to keep as insets.
