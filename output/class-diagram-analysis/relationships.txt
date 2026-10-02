@@ -1,0 +1,125 @@
+================================================================================
+RELATIONSHIP ANALYSIS (derived only from actual field declarations, signatures,
+constructor calls and method bodies in src/)
+================================================================================
+Every relationship below cites the source evidence that justifies it.
+Nothing is inferred from class names alone.
+
+================================================================================
+A. ASSOCIATION  (a class holds a field typed as another class)
+================================================================================
+Class A -> Class B | Kind | Field / evidence | Cardinality
+--------------------+------+------------------+------------
+ParkingLot -> Floor          | association (aggregated, see C) | field `private final TreeMap<Integer, Floor> floors;` values added by `addFloor(Floor)`; read via `getFloors()` | ParkingLot 1 -- 0..* Floor
+ParkingLot -> ParkingSpot    | association        | field `private final Map<String, ParkingSpot> vehicleToSpot;` written in `parkVehicle` (put) and `releaseVehicle` (remove) | ParkingLot 1 -- 0..* ParkingSpot (only occupied spots tracked)
+ParkingSpot -> SpotType      | association        | field `private SpotType spotType;` set in constructor; exposed by `getSpotType()` | 1 -- 1
+Vehicle -> VehicleType       | association        | field `private VehicleType vehicleType;` set in constructor; exposed by `getVehicleType()` | 1 -- 1
+Ticket -> Vehicle            | association        | field `private final Vehicle vehicle;` set in constructor | 1 -- 1
+Ticket -> ParkingSpot        | association        | field `private final ParkingSpot spot;` set in constructor | 1 -- 1
+ParkingLotCli -> ParkingLot  | association        | field `private final ParkingLot parkingLot;` = `ParkingLot.getInstance()` | 1 -- 1
+ParkingLotCli -> Scanner     | association (lib)  | field `private final Scanner scanner;` = `new Scanner(System.in)` | 1 -- 1
+ParkingLot -> ParkingLot     | SELF-association (singleton) | `private static final ParkingLot INSTANCE = new ParkingLot();` returned by `getInstance()` | exactly 1
+
+================================================================================
+B. COMPOSITION  (object created AND owned internally; lifecycle bound)
+================================================================================
+Result: NO composition relationships exist between domain classes.
+
+Reasoning (checked, not assumed):
+- ParkingLot.floors / Floor.spots / Floor.availableSpots hold references to
+  Floor and ParkingSpot objects that are created OUTSIDE the owner and injected
+  through addFloor(...) / addSpot(...). The owner therefore does not create them,
+  so this is aggregation (section C), not composition.
+- Ticket.vehicle and Ticket.spot are supplied via the constructor - also not
+  created by Ticket -> plain association.
+- Ticket.exitTime is created inside `settle` via the passed LocalDateTime - a
+  library type, not a domain composition.
+- The only objects genuinely instantiated inside owners are the COLLECTIONS:
+    Floor       : `new ArrayList<>()`, `new PriorityQueue<>()`
+    ParkingLot  : `new TreeMap<>()`, `new HashSet<>()`, `new HashMap<>()`
+  These containers are owned by their class, but their ELEMENTS are shared with
+  other objects (e.g. a ParkingSpot is in both Floor.spots and Floor.availableSpots),
+  so the element relationship is aggregation, not composition.
+- Special case: ParkingLot creates and holds itself (`INSTANCE`), a static
+  self-association implementing the Singleton pattern. In Mermaid: ParkingLot --> ParkingLot
+
+================================================================================
+C. AGGREGATION  (externally created object stored/reused; owner does not create it)
+================================================================================
+Class A o-- Class B | Evidence | Cardinality
+--------------------+----------+------------
+ParkingLot o-- Floor     | `addFloor(Floor floor)` stores a caller-created Floor in `floors`; the CLI builds the Floor objects, ParkingLot never `new Floor(...)`. No removal/deletion API owns the lifecycle. | 1 o-- 0..* (0 before any addFloor; 2 in the CLI setup; tests reset to 0)
+Floor o-- ParkingSpot    | `addSpot(ParkingSpot spot)` stores a caller-created spot in `spots` AND offers the same object to `availableSpots`. Floor never `new ...Spot(...)`. | 1 o-- 0..* (spot count varies; 3 on floor 1, 4 on floor 2 in the CLI)
+  (note: the SAME ParkingSpot instance is referenced twice inside Floor -
+   once in the `spots` list and (while free) once in the `availableSpots`
+   priority queue. This is a shared aggregation, not two relationships.)
+
+================================================================================
+D. DEPENDENCY  (used only via parameters, returns, locals, throws, or static calls)
+================================================================================
+Source -> Target | Nature of use | Evidence
+-----------------+---------------+---------
+ParkingLot -> Vehicle                 | method parameter | `parkVehicle(Vehicle)`, `findNearestAvailableSpot(Vehicle)`
+ParkingLot -> ParkingLotFullException | throws          | `parkVehicle(...) throws ParkingLotFullException`
+ParkingLot -> Floor                   | static/member calls on stored floors | `floor.findNearestAvailableSpot(...)`, streams over `Floor::getAvailableSpotCount`
+Floor -> Vehicle                      | method parameter | `findNearestAvailableSpot(Vehicle vehicle)`, `spot.canFitVehicle(vehicle)`
+Floor -> ParkingSpot                  | parameters/return/local | `addSpot(ParkingSpot)`, `occupySpot(ParkingSpot)`, `releaseSpot(ParkingSpot)`, local `PriorityQueue<ParkingSpot> candidates`
+ParkingSpot -> Vehicle                | method parameter | `abstract boolean canFitVehicle(Vehicle vehicle)`
+CompactSpot -> Vehicle                | method parameter | `canFitVehicle(Vehicle vehicle)`
+CompactSpot -> VehicleType            | static enum compare | `vehicle.getVehicleType() == VehicleType.BIKE / CAR`
+LargeSpot -> Vehicle                  | method parameter | `canFitVehicle(Vehicle vehicle)`
+HandicappedSpot -> Vehicle            | method parameter | `canFitVehicle(Vehicle vehicle)`
+Ticket -> Payable                     | method parameter + method call | `settle(Payable pricing, ...)` -> `pricing.calculateFee(...)`
+Ticket -> InvalidTicketException      | throws          | `settle(...) throws InvalidTicketException`
+Ticket -> LocalDateTime / Duration / Objects | library use | fields, `Duration.between(...)`, `Objects.hash(...)`
+ParkingLotCli -> ParkingLot           | static call + field | `ParkingLot.getInstance()`
+ParkingLotCli -> Floor                | local create      | `new Floor(1)`, `new Floor(2)` in `initializeSampleParkingLot`
+ParkingLotCli -> ParkingSpot (subtypes) | local create    | `new CompactSpot(...)`, `new LargeSpot(...)`, `new HandicappedSpot(...)`
+ParkingLotCli -> Bike / Car / Truck   | local create      | `case "BIKE" -> new Bike(...)` etc. in `createVehicle`
+ParkingLotCli -> Vehicle              | return type/param | `createVehicle(...) : Vehicle`, passed to `parkingLot.parkVehicle(vehicle)`
+ParkingLotCli -> ParkingLotFullException | catch          | `catch (ParkingLotFullException | IllegalArgumentException ...)`
+ParkingLotCli -> Scanner / Locale / Integer | library use | `scanner.nextLine()`, `toUpperCase(Locale.ROOT)`, `Integer.parseInt(...)`
+Floor -> Floor (self)                 | no
+
+Additionally, the pricing classes realize Payable (see section E), which is a
+realization, not a dependency.
+
+================================================================================
+E. REALIZATION / IMPLEMENTATION (implements)
+================================================================================
+Interface -> Implementing class | Evidence
+--------------------------------+---------
+Payable -> HourlyPricing        | `public class HourlyPricing implements Payable`
+Payable -> FlatRatePricing      | `public class FlatRatePricing implements Payable`
+Payable -> FirstHourFreePricing | `public class FirstHourFreePricing implements Payable`
+Comparable<ParkingSpot> -> ParkingSpot | `public abstract class ParkingSpot implements Comparable<ParkingSpot>`
+
+================================================================================
+F. GENERALIZATION (extends) - summarised; full table in inheritance.txt
+================================================================================
+Vehicle <|-- Bike / Car / Truck
+ParkingSpot <|-- CompactSpot / LargeSpot / HandicappedSpot
+Exception <|-- InvalidTicketException / ParkingLotFullException
+(Exception is java.lang.Exception.)
+
+================================================================================
+G. TEST-CODE RELATIONSHIPS (kept separate from production)
+================================================================================
+Vehicle <|-- ParkingSpotTest#StubVehicle
+ParkingSpot <|-- ParkingSpotTest#StubSpot
+Vehicle <|-- TicketTest#TestVehicle
+ParkingSpot <|-- TicketTest#TestSpot
+Vehicle <|-- VehicleTest#StubVehicle
+TicketTest -> Ticket / Payable implementations (uses, dependency in tests only)
+ParkingLotCoreTest / ReleaseValidationTest -> ParkingLot.getInstance() + reset() (uses, dependency)
+
+================================================================================
+H. ACCURACY FLAGS
+================================================================================
+- ParkingLot -> Floor and Floor -> ParkingSpot are classified as AGGREGATION based
+  on the source (objects created outside the owner). If your UML convention treats
+  "the whole owns its parts for the lifetime of the app" as composition, you could
+  render them as composition instead - this is a modelling-style choice, NOT a
+  source-code fact. Source-code fact: the owner does not instantiate the part.
+- Everything else is directly evidenced and requires no review.
+- No relationship is marked REQUIRES REVIEW as a correctness uncertainty.

@@ -1,0 +1,63 @@
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 1, spot 1.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Vehicle is already parked: TN05DB2480
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Invalid vehicle type.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Please enter a number from 1 to 4.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Floor number: Spot ID: No matching parking spot was found.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Floor number: Spot ID: No matching parking spot was found.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Floor number: Spot ID: Floor number and spot ID must be whole numbers.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Floor number: Spot ID: Floor number and spot ID must be whole numbers.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Thank you for using Smart Parking Lot Management.

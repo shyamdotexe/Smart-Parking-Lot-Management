@@ -1,0 +1,81 @@
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 1, spot 1.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 1, spot 2.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 1, spot 3.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 2, spot 1.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 2, spot 2.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 2, spot 3.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): Parked at floor 2, spot 4.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Vehicle number: Vehicle type (BIKE / CAR / TRUCK): No suitable parking spot is available.
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: 
+Floor | Spot | Type        | Status
+-------------------------------------
+1     | 1    | COMPACT     | OCCUPIED
+1     | 2    | LARGE       | OCCUPIED
+1     | 3    | HANDICAPPED | OCCUPIED
+2     | 1    | COMPACT     | OCCUPIED
+2     | 2    | COMPACT     | OCCUPIED
+2     | 3    | LARGE       | OCCUPIED
+2     | 4    | HANDICAPPED | OCCUPIED
+Total spots: 7
+Available spots: 0
+
+--- Smart Parking Lot ---
+1. Park vehicle
+2. Release vehicle
+3. Display parking status
+4. Exit
+Choose an option: Thank you for using Smart Parking Lot Management.

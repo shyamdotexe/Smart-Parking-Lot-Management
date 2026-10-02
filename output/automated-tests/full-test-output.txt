@@ -1,0 +1,65 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< com.parkinglot:smart-parking-lot >------------------
+[INFO] Building smart-parking-lot 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ smart-parking-lot ---
+[INFO] Deleting C:\Smart-Parking-Lot-Management\target
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ smart-parking-lot ---
+[INFO] skip non existing resourceDirectory C:\Smart-Parking-Lot-Management\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ smart-parking-lot ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 20 source files with javac [debug target 17] to target\classes
+[WARNING] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ smart-parking-lot ---
+[INFO] skip non existing resourceDirectory C:\Smart-Parking-Lot-Management\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ smart-parking-lot ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 9 source files with javac [debug target 17] to target\test-classes
+[WARNING] location of system modules is not set in conjunction with -source 17
+  not setting the location of system modules may lead to class files that cannot run on JDK 17
+    --release 17 is recommended instead of -source 17 -target 17 because it sets the location of system modules automatically
+[INFO] 
+[INFO] --- surefire:3.5.0:test (default-test) @ smart-parking-lot ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.parkinglot.billing.FirstHourFreePricingTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 s -- in com.parkinglot.billing.FirstHourFreePricingTest
+[INFO] Running com.parkinglot.billing.FlatRatePricingTest
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in com.parkinglot.billing.FlatRatePricingTest
+[INFO] Running com.parkinglot.billing.HourlyPricingTest
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 s -- in com.parkinglot.billing.HourlyPricingTest
+[INFO] Running com.parkinglot.billing.PricingStrategyTest
+[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in com.parkinglot.billing.PricingStrategyTest
+[INFO] Running com.parkinglot.core.ParkingLotCoreTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.parkinglot.core.ParkingLotCoreTest
+[INFO] Running com.parkinglot.core.ReleaseValidationTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in com.parkinglot.core.ReleaseValidationTest
+[INFO] Running com.parkinglot.spot.ParkingSpotTest
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.016 s -- in com.parkinglot.spot.ParkingSpotTest
+[INFO] Running com.parkinglot.ticket.TicketTest
+[INFO] Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.032 s -- in com.parkinglot.ticket.TicketTest
+[INFO] Running com.parkinglot.vehicle.VehicleTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.parkinglot.vehicle.VehicleTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 94, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.284 s
+[INFO] Finished at: 2026-10-02T23:43:54+05:30
+[INFO] ------------------------------------------------------------------------
